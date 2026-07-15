@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build (iOS Simulator)
+        run: |
+          xcodebuild build \
+            -project MailApp/MailApp.xcodeproj \
+            -scheme MailApp \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO
+
+  build-macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build (macOS)
+        run: |
+          xcodebuild build \
+            -project MailApp/MailApp.xcodeproj \
+            -scheme MailApp \
+            -destination "generic/platform=macOS" \
+            CODE_SIGNING_ALLOWED=NO
