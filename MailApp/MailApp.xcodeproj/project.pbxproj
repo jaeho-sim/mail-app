@@ -7,25 +7,57 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		15D2DDE5E76C4F179BFFAFD2 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D3EB0788FE48A1A6BAB7C0 /* Message.swift */; };
 		2346D32130084C2A001E060F /* MailAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2346D32030084C2A001E060F /* MailAppApp.swift */; };
 		2346D32330084C2A001E060F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2346D32230084C2A001E060F /* ContentView.swift */; };
 		2346D32530084C2D001E060F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2346D32430084C2D001E060F /* Assets.xcassets */; };
-		E6F57A08552642ED9E6D904A /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 087E2369AA6E4377A10B7089 /* Account.swift */; };
-		3A219936AD974DBFA3FFFF62 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C7D311423749848F56AC4B /* Mailbox.swift */; };
-		15D2DDE5E76C4F179BFFAFD2 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D3EB0788FE48A1A6BAB7C0 /* Message.swift */; };
 		2C37CD847C8C48BCB3E14810 /* UserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C5B16088DA4C6BB2735E55 /* UserConfig.swift */; };
+		3A219936AD974DBFA3FFFF62 /* Mailbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C7D311423749848F56AC4B /* Mailbox.swift */; };
+		E6F57A08552642ED9E6D904A /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 087E2369AA6E4377A10B7089 /* Account.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2346D33330084FC5001E060F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2346D31530084C2A001E060F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2346D31C30084C2A001E060F;
+			remoteInfo = MailApp;
+		};
+		2346D34230084FDB001E060F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2346D31530084C2A001E060F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2346D31C30084C2A001E060F;
+			remoteInfo = MailApp;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		087E2369AA6E4377A10B7089 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		2346D31D30084C2A001E060F /* MailApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MailApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2346D32030084C2A001E060F /* MailAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailAppApp.swift; sourceTree = "<group>"; };
 		2346D32230084C2A001E060F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2346D32430084C2D001E060F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		087E2369AA6E4377A10B7089 /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
-		77C7D311423749848F56AC4B /* Mailbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailbox.swift; sourceTree = "<group>"; };
+		2346D32F30084FC5001E060F /* MailAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MailAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2346D33C30084FDB001E060F /* MailAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MailAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		49D3EB0788FE48A1A6BAB7C0 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		77C7D311423749848F56AC4B /* Mailbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailbox.swift; sourceTree = "<group>"; };
 		99C5B16088DA4C6BB2735E55 /* UserConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConfig.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		2346D33030084FC5001E060F /* MailAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MailAppTests;
+			sourceTree = "<group>";
+		};
+		2346D33D30084FDB001E060F /* MailAppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MailAppUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		2346D31A30084C2A001E060F /* Frameworks */ = {
@@ -35,12 +67,36 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2346D32C30084FC5001E060F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2346D33930084FDB001E060F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		233ED8C29F3445EAA9B387C9 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				34A1A091FA224D7A8A4F5DF6 /* Models */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		2346D31430084C2A001E060F = {
 			isa = PBXGroup;
 			children = (
+				2346D33030084FC5001E060F /* MailAppTests */,
+				2346D33D30084FDB001E060F /* MailAppUITests */,
 				2346D31E30084C2A001E060F /* Products */,
 				2346D32430084C2D001E060F /* Assets.xcassets */,
 				233ED8C29F3445EAA9B387C9 /* Shared */,
@@ -53,6 +109,8 @@
 			isa = PBXGroup;
 			children = (
 				2346D31D30084C2A001E060F /* MailApp.app */,
+				2346D32F30084FC5001E060F /* MailAppTests.xctest */,
+				2346D33C30084FDB001E060F /* MailAppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -60,20 +118,12 @@
 		34A1A091FA224D7A8A4F5DF6 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-					087E2369AA6E4377A10B7089 /* Account.swift */,
-					77C7D311423749848F56AC4B /* Mailbox.swift */,
-					49D3EB0788FE48A1A6BAB7C0 /* Message.swift */,
-					99C5B16088DA4C6BB2735E55 /* UserConfig.swift */,
+				087E2369AA6E4377A10B7089 /* Account.swift */,
+				77C7D311423749848F56AC4B /* Mailbox.swift */,
+				49D3EB0788FE48A1A6BAB7C0 /* Message.swift */,
+				99C5B16088DA4C6BB2735E55 /* UserConfig.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		233ED8C29F3445EAA9B387C9 /* Shared */ = {
-			isa = PBXGroup;
-			children = (
-				34A1A091FA224D7A8A4F5DF6 /* Models */,
-			);
-			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -98,6 +148,52 @@
 			productReference = 2346D31D30084C2A001E060F /* MailApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		2346D32E30084FC5001E060F /* MailAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2346D33730084FC5001E060F /* Build configuration list for PBXNativeTarget "MailAppTests" */;
+			buildPhases = (
+				2346D32B30084FC5001E060F /* Sources */,
+				2346D32C30084FC5001E060F /* Frameworks */,
+				2346D32D30084FC5001E060F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2346D33430084FC5001E060F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				2346D33030084FC5001E060F /* MailAppTests */,
+			);
+			name = MailAppTests;
+			packageProductDependencies = (
+			);
+			productName = MailAppTests;
+			productReference = 2346D32F30084FC5001E060F /* MailAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		2346D33B30084FDB001E060F /* MailAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2346D34430084FDB001E060F /* Build configuration list for PBXNativeTarget "MailAppUITests" */;
+			buildPhases = (
+				2346D33830084FDB001E060F /* Sources */,
+				2346D33930084FDB001E060F /* Frameworks */,
+				2346D33A30084FDB001E060F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2346D34330084FDB001E060F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				2346D33D30084FDB001E060F /* MailAppUITests */,
+			);
+			name = MailAppUITests;
+			packageProductDependencies = (
+			);
+			productName = MailAppUITests;
+			productReference = 2346D33C30084FDB001E060F /* MailAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -110,6 +206,14 @@
 				TargetAttributes = {
 					2346D31C30084C2A001E060F = {
 						CreatedOnToolsVersion = 26.5;
+					};
+					2346D32E30084FC5001E060F = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 2346D31C30084C2A001E060F;
+					};
+					2346D33B30084FDB001E060F = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 2346D31C30084C2A001E060F;
 					};
 				};
 			};
@@ -128,6 +232,8 @@
 			projectRoot = "";
 			targets = (
 				2346D31C30084C2A001E060F /* MailApp */,
+				2346D32E30084FC5001E060F /* MailAppTests */,
+				2346D33B30084FDB001E060F /* MailAppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -141,6 +247,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2346D32D30084FC5001E060F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2346D33A30084FDB001E060F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -150,14 +270,41 @@
 			files = (
 				2346D32330084C2A001E060F /* ContentView.swift in Sources */,
 				2346D32130084C2A001E060F /* MailAppApp.swift in Sources */,
-					E6F57A08552642ED9E6D904A /* Account.swift in Sources */,
-					3A219936AD974DBFA3FFFF62 /* Mailbox.swift in Sources */,
-					15D2DDE5E76C4F179BFFAFD2 /* Message.swift in Sources */,
-					2C37CD847C8C48BCB3E14810 /* UserConfig.swift in Sources */,
+				E6F57A08552642ED9E6D904A /* Account.swift in Sources */,
+				3A219936AD974DBFA3FFFF62 /* Mailbox.swift in Sources */,
+				15D2DDE5E76C4F179BFFAFD2 /* Message.swift in Sources */,
+				2C37CD847C8C48BCB3E14810 /* UserConfig.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2346D32B30084FC5001E060F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2346D33830084FDB001E060F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2346D33430084FC5001E060F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2346D31C30084C2A001E060F /* MailApp */;
+			targetProxy = 2346D33330084FC5001E060F /* PBXContainerItemProxy */;
+		};
+		2346D34330084FDB001E060F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2346D31C30084C2A001E060F /* MailApp */;
+			targetProxy = 2346D34230084FDB001E060F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2346D32630084C2D001E060F /* Debug */ = {
@@ -358,6 +505,104 @@
 			};
 			name = Release;
 		};
+		2346D33530084FC5001E060F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jaeho.mailapp.MailAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MailApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MailApp";
+				XROS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		2346D33630084FC5001E060F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jaeho.mailapp.MailAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MailApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MailApp";
+				XROS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
+		2346D34530084FDB001E060F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jaeho.mailapp.MailAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = MailApp;
+				XROS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		2346D34630084FDB001E060F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jaeho.mailapp.MailAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = MailApp;
+				XROS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -375,6 +620,24 @@
 			buildConfigurations = (
 				2346D32930084C2D001E060F /* Debug */,
 				2346D32A30084C2D001E060F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2346D33730084FC5001E060F /* Build configuration list for PBXNativeTarget "MailAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2346D33530084FC5001E060F /* Debug */,
+				2346D33630084FC5001E060F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2346D34430084FDB001E060F /* Build configuration list for PBXNativeTarget "MailAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2346D34530084FDB001E060F /* Debug */,
+				2346D34630084FDB001E060F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
