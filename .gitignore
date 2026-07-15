@@ -1,0 +1,30 @@
+# Xcode
+.DS_Store
+build/
+DerivedData/
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+!*.xcworkspace/xcshareddata/
+.swiftpm/
+*.xcuserstate
+xcuserdata/
+
+# CocoaPods / SPM
+Pods/
+.build/
+
+# Secrets / config (never commit API keys or GoogleService-Info.plist)
+GoogleService-Info.plist
+*.xcconfig
+Secrets.swift
+.env
+
+# Fastlane (if added later)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
