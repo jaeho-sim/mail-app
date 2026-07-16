@@ -7,9 +7,14 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseCore
 
 @main
 struct MailAppApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
