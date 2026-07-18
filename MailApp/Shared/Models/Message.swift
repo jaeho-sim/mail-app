@@ -17,6 +17,10 @@ final class Message {
     var receivedAt: Date
     var isRead: Bool
     var mailboxName: String
+    var accountEmail: String = ""
+    // Mirrors Gmail's STARRED label, which is also what Apple Mail's flag
+    // (\Flagged over IMAP) maps to — so this stays in sync with native Mail.
+    var isFlagged: Bool = false
 
     init(
         messageId: String,
@@ -25,7 +29,9 @@ final class Message {
         snippet: String,
         receivedAt: Date,
         isRead: Bool = false,
-        mailboxName: String
+        mailboxName: String,
+        accountEmail: String,
+        isFlagged: Bool = false
     ) {
         self.messageId = messageId
         self.subject = subject
@@ -34,5 +40,7 @@ final class Message {
         self.receivedAt = receivedAt
         self.isRead = isRead
         self.mailboxName = mailboxName
+        self.accountEmail = accountEmail
+        self.isFlagged = isFlagged
     }
 }

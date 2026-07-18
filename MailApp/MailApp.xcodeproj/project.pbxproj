@@ -34,6 +34,12 @@
 		6B76E65659D44BE0A34A97D0 /* MailRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6DB3B08712466E9FB607C7 /* MailRootView.swift */; };
 		1502C3AC0306401DA96158A7 /* ComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98A5C14E2AF4ED0A1F6106A /* ComposeView.swift */; };
 		44C9A63E2C9D4611A2341CDB /* PeriodicSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DD24866C1D42FABED278AB /* PeriodicSyncManager.swift */; };
+		891CE035A0FE4A0BA9D824FB /* PlatformPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BF4D1B989FB4EB39369F788 /* PlatformPresentation.swift */; };
+		EE3805DB0EF848E9B3BCA854 /* MailboxSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18699A44EA6C42BB8EEB7C1E /* MailboxSelection.swift */; };
+		CE63EEC9B6114EB99E3DB7D3 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36A52420339E4AC183F883E4 /* KeychainStore.swift */; };
+		B2535B1847F0453CB49172D3 /* GoogleOAuthTokenRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB78A9D7D1C4A11A306FB28 /* GoogleOAuthTokenRefresher.swift */; };
+		4F4F9AC9F7324CC0B26EAC54 /* AccountsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 395F5103A640420B89AD50CF /* AccountsManager.swift */; };
+		3BDEC8F798E242CB84ABCE81 /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD30E837D089497482C33E4E /* AccountsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +85,12 @@
 		0E6DB3B08712466E9FB607C7 /* MailRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailRootView.swift; sourceTree = "<group>"; };
 		E98A5C14E2AF4ED0A1F6106A /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
 		F5DD24866C1D42FABED278AB /* PeriodicSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodicSyncManager.swift; sourceTree = "<group>"; };
+		2BF4D1B989FB4EB39369F788 /* PlatformPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformPresentation.swift; sourceTree = "<group>"; };
+		18699A44EA6C42BB8EEB7C1E /* MailboxSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailboxSelection.swift; sourceTree = "<group>"; };
+		36A52420339E4AC183F883E4 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		3DB78A9D7D1C4A11A306FB28 /* GoogleOAuthTokenRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleOAuthTokenRefresher.swift; sourceTree = "<group>"; };
+		395F5103A640420B89AD50CF /* AccountsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsManager.swift; sourceTree = "<group>"; };
+		CD30E837D089497482C33E4E /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -173,6 +185,7 @@
 			children = (
 				A824C70697B44756B416918B /* AuthManager.swift */,
 				EDF15277A7404B409D0F2F55 /* SignInView.swift */,
+				2BF4D1B989FB4EB39369F788 /* PlatformPresentation.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -189,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				97F55812711549668ABAEC79 /* Auth */,
+				12691E97ACFF4649ADD5C09D /* Accounts */,
 				585E87AC90FB4B8DB6AEFEAA /* Sync */,
 				9F926464885E41B6972C4BF9 /* MailEngine */,
 				235510C92ECF4593B3A39721 /* Inbox */,
@@ -215,6 +229,7 @@
 				867767A8C5C04486BDAABC4A /* MessageListView.swift */,
 				737326DFFD8B470FA286CD79 /* MessageDetailView.swift */,
 				5EE097B0A20B4BC190892A1B /* SettingsView.swift */,
+				18699A44EA6C42BB8EEB7C1E /* MailboxSelection.swift */,
 				0E6DB3B08712466E9FB607C7 /* MailRootView.swift */,
 			);
 			path = Inbox;
@@ -226,6 +241,17 @@
 				E98A5C14E2AF4ED0A1F6106A /* ComposeView.swift */,
 			);
 			path = Compose;
+			sourceTree = "<group>";
+		};
+		12691E97ACFF4649ADD5C09D /* Accounts */ = {
+			isa = PBXGroup;
+			children = (
+				36A52420339E4AC183F883E4 /* KeychainStore.swift */,
+				3DB78A9D7D1C4A11A306FB28 /* GoogleOAuthTokenRefresher.swift */,
+				395F5103A640420B89AD50CF /* AccountsManager.swift */,
+				CD30E837D089497482C33E4E /* AccountsView.swift */,
+			);
+			path = Accounts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -400,6 +426,12 @@
 					A783E7FF9AC3498F81FEA3FF /* SettingsView.swift in Sources */,
 					6B76E65659D44BE0A34A97D0 /* MailRootView.swift in Sources */,
 					1502C3AC0306401DA96158A7 /* ComposeView.swift in Sources */,
+					891CE035A0FE4A0BA9D824FB /* PlatformPresentation.swift in Sources */,
+					EE3805DB0EF848E9B3BCA854 /* MailboxSelection.swift in Sources */,
+					CE63EEC9B6114EB99E3DB7D3 /* KeychainStore.swift in Sources */,
+					B2535B1847F0453CB49172D3 /* GoogleOAuthTokenRefresher.swift in Sources */,
+					4F4F9AC9F7324CC0B26EAC54 /* AccountsManager.swift in Sources */,
+					3BDEC8F798E242CB84ABCE81 /* AccountsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

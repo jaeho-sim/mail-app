@@ -16,6 +16,7 @@ final class SyncService: ObservableObject {
 
     @Published var signature: String = ""
     @Published var preferredTheme: String = "system"
+    @Published var syncIntervalMinutes: Double = 5
     @Published var isSyncing = false
     @Published var errorMessage: String?
 
@@ -23,19 +24,20 @@ final class SyncService: ObservableObject {
 
     private init() {}
 
-    func loadConfig(for userId: String) {
+    /// Awaits the fetch so callers can rely on the values being current before
+    /// using them (e.g. scheduling the periodic sync timer at launch).
+    func loadConfig(for userId: String) async {
         isSyncing = true
         errorMessage = nil
-        Task {
-            defer { isSyncing = false }
-            do {
-                let snapshot = try await db.collection("userConfigs").document(userId).getDocument()
-                let data = snapshot.data()
-                signature = data?["signature"] as? String ?? ""
-                preferredTheme = data?["preferredTheme"] as? String ?? "system"
-            } catch {
-                errorMessage = error.localizedDescription
-            }
+        defer { isSyncing = false }
+        do {
+            let snapshot = try await db.collection("userConfigs").document(userId).getDocument()
+            let data = snapshot.data()
+            signature = data?["signature"] as? String ?? ""
+            preferredTheme = data?["preferredTheme"] as? String ?? "system"
+            syncIntervalMinutes = data?["syncIntervalMinutes"] as? Double ?? 5
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 
@@ -45,6 +47,7 @@ final class SyncService: ObservableObject {
         let data: [String: Any] = [
             "signature": signature,
             "preferredTheme": preferredTheme,
+            "syncIntervalMinutes": syncIntervalMinutes,
             "updatedAt": FieldValue.serverTimestamp(),
         ]
         Task {

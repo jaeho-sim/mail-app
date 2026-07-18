@@ -2,16 +2,21 @@
 //  ComposeView.swift
 //  MailApp
 //
-//  Minimal compose sheet. Note: sending requires the gmail.send scope, which
-//  Phase 3 did not request (only gmail.readonly). Add it to AuthManager's
-//  gmailScopes + the Google Auth Platform Data Access tab before this will work.
+//  Minimal compose sheet, with a "From" account picker now that multiple
+//  Gmail accounts can be connected. Note: sending requires the gmail.send
+//  scope, which AccountsManager currently only requests gmail.readonly for.
+//  Add gmail.send there + the Google Auth Platform Data Access tab, then
+//  reconnect the account, before this will actually work.
 //
 
 import SwiftUI
+import SwiftData
 
 struct ComposeView: View {
     @Environment(\.dismiss) private var dismiss
+    @Query(sort: \Account.email) private var accounts: [Account]
 
+    @State private var fromAccountEmail: String?
     @State private var to = ""
     @State private var subject = ""
     @State private var messageBody = ""
@@ -21,6 +26,13 @@ struct ComposeView: View {
     var body: some View {
         NavigationStack {
             Form {
+                if accounts.count > 1 {
+                    Picker("From", selection: $fromAccountEmail) {
+                        ForEach(accounts, id: \.email) { account in
+                            Text(account.email).tag(Optional(account.email))
+                        }
+                    }
+                }
                 TextField("To", text: $to)
                     #if os(iOS)
                     .keyboardType(.emailAddress)
@@ -39,7 +51,7 @@ struct ComposeView: View {
                     Button("Send") {
                         Task { await send() }
                     }
-                    .disabled(to.isEmpty || isSending)
+                    .disabled(to.isEmpty || isSending || fromAccountEmail == nil)
                 }
             }
             .overlay {
@@ -58,19 +70,28 @@ struct ComposeView: View {
             } message: {
                 Text(errorMessage ?? "")
             }
+            .onAppear {
+                if fromAccountEmail == nil {
+                    fromAccountEmail = accounts.first?.email
+                }
+            }
         }
     }
 
     private func send() async {
+        guard let fromAccountEmail else {
+            errorMessage = "Add a Gmail account before composing."
+            return
+        }
         isSending = true
         defer { isSending = false }
         do {
-            let token = try await AuthManager.shared.validGmailAccessToken()
+            let token = try await AccountsManager.shared.accessToken(forAccountEmail: fromAccountEmail)
             let raw = Self.makeRawMessage(to: to, subject: subject, body: messageBody)
             try await GmailAPIClient().sendRawMessage(rawRFC2822Base64URL: raw, accessToken: token)
             dismiss()
         } catch {
-            errorMessage = "Sending failed: \(error.localizedDescription). If this is a scope error, add gmail.send in AuthManager and the Google Auth Platform Data Access tab, then sign in again."
+            errorMessage = "Sending failed: \(error.localizedDescription). If this is a scope error, add gmail.send in AccountsManager and the Google Auth Platform Data Access tab, then remove and re-add the account."
         }
     }
 

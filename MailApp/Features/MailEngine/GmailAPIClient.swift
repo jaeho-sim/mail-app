@@ -3,7 +3,7 @@
 //  MailApp
 //
 //  Thin async/await wrapper around the Gmail REST API. Stateless — callers
-//  pass a fresh access token per call (see AuthManager.validGmailAccessToken()).
+//  pass a fresh access token per call (see AccountsManager.accessToken(forAccountEmail:)).
 //
 
 import Foundation
@@ -73,7 +73,7 @@ struct GmailAPIClient {
     }
 
     /// `rawRFC2822Base64URL` must be a base64url-encoded (not standard base64) RFC 2822 message.
-    /// Requires the gmail.send scope in addition to gmail.readonly.
+    /// Covered by the gmail.modify scope this app requests.
     func sendRawMessage(rawRFC2822Base64URL: String, accessToken: String) async throws {
         let url = baseURL.appendingPathComponent("messages/send")
         let body: [String: Any] = ["raw": rawRFC2822Base64URL]

@@ -3,6 +3,8 @@
 //  MailApp
 //
 //  Orchestrates fetching from Gmail and upserting into the local SwiftData store.
+//  Operates per-account (multi-account support) with a helper to sync all
+//  connected accounts at once for the unified inbox / periodic refresh.
 //
 
 import Foundation
@@ -16,43 +18,58 @@ final class MailSyncEngine: ObservableObject {
     @Published var isSyncing = false
     @Published var errorMessage: String?
     @Published var lastSyncedAt: Date?
-    @Published private(set) var nextPageToken: String?
+    @Published private(set) var nextPageTokens: [String: String] = [:] // keyed by accountEmail
 
     private let client = GmailAPIClient()
     private let pageSize = 25
 
     private init() {}
 
-    /// Fetches labels (as mailboxes) and the first page of inbox messages, upserting both into `modelContext`.
-    func syncInbox(accountEmail: String, accessToken: String, modelContext: ModelContext) async {
+    func nextPageToken(forAccountEmail email: String) -> String? {
+        nextPageTokens[email]
+    }
+
+    /// Syncs one connected account: its labels (as mailboxes) and the first page of inbox messages.
+    func syncAccount(accountEmail: String, accessToken: String, modelContext: ModelContext) async {
         isSyncing = true
         errorMessage = nil
         defer { isSyncing = false }
 
         do {
             let labelsResponse = try await client.listLabels(accessToken: accessToken)
-            for label in labelsResponse.labels {
+            let keptLabels = labelsResponse.labels.filter(Self.isSidebarWorthy)
+            for label in keptLabels {
                 upsertMailbox(name: label.name, accountEmail: accountEmail, modelContext: modelContext)
             }
+            removeStaleMailboxes(keeping: keptLabels.map(\.name), accountEmail: accountEmail, modelContext: modelContext)
 
             let listResponse = try await client.listMessages(labelId: "INBOX", maxResults: pageSize, accessToken: accessToken)
             for ref in listResponse.messages ?? [] {
                 let full = try await client.getMessage(id: ref.id, accessToken: accessToken)
-                upsertMessage(full, modelContext: modelContext)
+                upsertMessage(full, accountEmail: accountEmail, modelContext: modelContext)
             }
 
             try modelContext.save()
-            nextPageToken = listResponse.nextPageToken
+            nextPageTokens[accountEmail] = listResponse.nextPageToken
             lastSyncedAt = .now
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 
-    /// Fetches the next page of older inbox messages (pagination), if one exists.
-    /// Call from a "Load More" affordance at the bottom of the message list.
-    func loadMoreMessages(accessToken: String, modelContext: ModelContext) async {
-        guard let pageToken = nextPageToken else { return }
+    /// Syncs every connected account in turn. Used for the unified inbox and periodic refresh.
+    func syncAllAccounts(_ accounts: [Account], modelContext: ModelContext) async {
+        for account in accounts {
+            guard let token = try? await AccountsManager.shared.accessToken(forAccountEmail: account.email) else {
+                continue
+            }
+            await syncAccount(accountEmail: account.email, accessToken: token, modelContext: modelContext)
+        }
+    }
+
+    /// Fetches the next page of older inbox messages for one account (pagination).
+    func loadMoreMessages(accountEmail: String, accessToken: String, modelContext: ModelContext) async {
+        guard let pageToken = nextPageTokens[accountEmail] else { return }
         isSyncing = true
         errorMessage = nil
         defer { isSyncing = false }
@@ -66,13 +83,24 @@ final class MailSyncEngine: ObservableObject {
             )
             for ref in listResponse.messages ?? [] {
                 let full = try await client.getMessage(id: ref.id, accessToken: accessToken)
-                upsertMessage(full, modelContext: modelContext)
+                upsertMessage(full, accountEmail: accountEmail, modelContext: modelContext)
             }
             try modelContext.save()
-            nextPageToken = listResponse.nextPageToken
+            nextPageTokens[accountEmail] = listResponse.nextPageToken
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    /// Gmail returns every system label (STARRED, IMPORTANT, UNREAD, the inbox
+    /// tab categories, CHAT, etc.) alongside real folders. Only the traditional
+    /// mailbox-style system labels and genuine user-created labels belong in
+    /// the sidebar as "folders" — the rest are either handled elsewhere
+    /// (STARRED → the Flagged smart mailbox) or not useful as a folder at all.
+    private static let sidebarSystemLabelNames: Set<String> = ["INBOX", "SENT", "DRAFT", "TRASH", "SPAM"]
+
+    private static func isSidebarWorthy(_ label: GmailLabel) -> Bool {
+        label.type == "user" || sidebarSystemLabelNames.contains(label.name.uppercased())
     }
 
     private func upsertMailbox(name: String, accountEmail: String, modelContext: ModelContext) {
@@ -85,7 +113,18 @@ final class MailSyncEngine: ObservableObject {
         modelContext.insert(Mailbox(name: name, accountEmail: accountEmail))
     }
 
-    private func upsertMessage(_ gmailMessage: GmailMessage, modelContext: ModelContext) {
+    /// Removes previously-synced mailboxes that are no longer sidebar-worthy
+    /// (e.g. from before this filter existed, or a label the user deleted).
+    private func removeStaleMailboxes(keeping names: [String], accountEmail: String, modelContext: ModelContext) {
+        let keepSet = Set(names)
+        let descriptor = FetchDescriptor<Mailbox>(predicate: #Predicate { $0.accountEmail == accountEmail })
+        guard let existing = try? modelContext.fetch(descriptor) else { return }
+        for mailbox in existing where !keepSet.contains(mailbox.name) {
+            modelContext.delete(mailbox)
+        }
+    }
+
+    private func upsertMessage(_ gmailMessage: GmailMessage, accountEmail: String, modelContext: ModelContext) {
         let id = gmailMessage.id
         let descriptor = FetchDescriptor<Message>(predicate: #Predicate { $0.messageId == id })
 
@@ -93,6 +132,7 @@ final class MailSyncEngine: ObservableObject {
         let subject = headers.first { $0.name.caseInsensitiveCompare("Subject") == .orderedSame }?.value ?? "(no subject)"
         let sender = headers.first { $0.name.caseInsensitiveCompare("From") == .orderedSame }?.value ?? "Unknown sender"
         let isRead = !(gmailMessage.labelIds?.contains("UNREAD") ?? false)
+        let isFlagged = gmailMessage.labelIds?.contains("STARRED") ?? false
         let receivedAt = Self.date(fromInternalDate: gmailMessage.internalDate) ?? .now
 
         if let existing = try? modelContext.fetch(descriptor).first {
@@ -100,7 +140,9 @@ final class MailSyncEngine: ObservableObject {
             existing.sender = sender
             existing.snippet = gmailMessage.snippet ?? ""
             existing.isRead = isRead
+            existing.isFlagged = isFlagged
             existing.receivedAt = receivedAt
+            existing.accountEmail = accountEmail
             return
         }
 
@@ -112,7 +154,9 @@ final class MailSyncEngine: ObservableObject {
                 snippet: gmailMessage.snippet ?? "",
                 receivedAt: receivedAt,
                 isRead: isRead,
-                mailboxName: "INBOX"
+                mailboxName: "INBOX",
+                accountEmail: accountEmail,
+                isFlagged: isFlagged
             )
         )
     }
