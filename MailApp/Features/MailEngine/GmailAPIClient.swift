@@ -30,12 +30,16 @@ struct GmailAPIClient {
         self.session = session
     }
 
-    func listMessages(labelId: String = "INBOX", maxResults: Int = 25, accessToken: String) async throws -> GmailListMessagesResponse {
+    func listMessages(labelId: String = "INBOX", maxResults: Int = 25, pageToken: String? = nil, accessToken: String) async throws -> GmailListMessagesResponse {
         var components = URLComponents(url: baseURL.appendingPathComponent("messages"), resolvingAgainstBaseURL: false)!
-        components.queryItems = [
+        var queryItems = [
             URLQueryItem(name: "labelIds", value: labelId),
             URLQueryItem(name: "maxResults", value: String(maxResults)),
         ]
+        if let pageToken {
+            queryItems.append(URLQueryItem(name: "pageToken", value: pageToken))
+        }
+        components.queryItems = queryItems
         return try await get(components.url!, accessToken: accessToken)
     }
 

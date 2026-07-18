@@ -70,6 +70,10 @@ struct MailRootView: View {
             if mailboxes.isEmpty {
                 await sync()
             }
+            PeriodicSyncManager.shared.start(modelContext: modelContext)
+        }
+        .onDisappear {
+            PeriodicSyncManager.shared.stop()
         }
         .sheet(isPresented: $showingCompose) {
             ComposeView()

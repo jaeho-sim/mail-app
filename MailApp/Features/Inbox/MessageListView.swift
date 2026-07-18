@@ -12,6 +12,10 @@ struct MessageListView: View {
     @Query private var messages: [Message]
     @Binding var selection: String?
 
+    @StateObject private var auth = AuthManager.shared
+    @StateObject private var mailSync = MailSyncEngine.shared
+    @Environment(\.modelContext) private var modelContext
+
     init(mailboxName: String, selection: Binding<String?>) {
         _messages = Query(
             filter: #Predicate<Message> { $0.mailboxName == mailboxName },
@@ -26,6 +30,22 @@ struct MessageListView: View {
                 MessageRow(message: message)
                     .tag(message.messageId)
             }
+
+            if mailSync.nextPageToken != nil {
+                HStack {
+                    Spacer()
+                    if mailSync.isSyncing {
+                        ProgressView()
+                    } else {
+                        Button("Load More") {
+                            Task { await loadMore() }
+                        }
+                        .buttonStyle(.borderless)
+                    }
+                    Spacer()
+                }
+                .padding(.vertical, 8)
+            }
         }
         .listStyle(.plain)
         .overlay {
@@ -33,6 +53,11 @@ struct MessageListView: View {
                 ContentUnavailableView("No Messages", systemImage: "tray")
             }
         }
+    }
+
+    private func loadMore() async {
+        guard let token = try? await auth.validGmailAccessToken() else { return }
+        await mailSync.loadMoreMessages(accessToken: token, modelContext: modelContext)
     }
 }
 

@@ -16,12 +16,14 @@ final class MailSyncEngine: ObservableObject {
     @Published var isSyncing = false
     @Published var errorMessage: String?
     @Published var lastSyncedAt: Date?
+    @Published private(set) var nextPageToken: String?
 
     private let client = GmailAPIClient()
+    private let pageSize = 25
 
     private init() {}
 
-    /// Fetches labels (as mailboxes) and the latest inbox messages, upserting both into `modelContext`.
+    /// Fetches labels (as mailboxes) and the first page of inbox messages, upserting both into `modelContext`.
     func syncInbox(accountEmail: String, accessToken: String, modelContext: ModelContext) async {
         isSyncing = true
         errorMessage = nil
@@ -33,14 +35,41 @@ final class MailSyncEngine: ObservableObject {
                 upsertMailbox(name: label.name, accountEmail: accountEmail, modelContext: modelContext)
             }
 
-            let listResponse = try await client.listMessages(labelId: "INBOX", maxResults: 25, accessToken: accessToken)
+            let listResponse = try await client.listMessages(labelId: "INBOX", maxResults: pageSize, accessToken: accessToken)
             for ref in listResponse.messages ?? [] {
                 let full = try await client.getMessage(id: ref.id, accessToken: accessToken)
                 upsertMessage(full, modelContext: modelContext)
             }
 
             try modelContext.save()
+            nextPageToken = listResponse.nextPageToken
             lastSyncedAt = .now
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    /// Fetches the next page of older inbox messages (pagination), if one exists.
+    /// Call from a "Load More" affordance at the bottom of the message list.
+    func loadMoreMessages(accessToken: String, modelContext: ModelContext) async {
+        guard let pageToken = nextPageToken else { return }
+        isSyncing = true
+        errorMessage = nil
+        defer { isSyncing = false }
+
+        do {
+            let listResponse = try await client.listMessages(
+                labelId: "INBOX",
+                maxResults: pageSize,
+                pageToken: pageToken,
+                accessToken: accessToken
+            )
+            for ref in listResponse.messages ?? [] {
+                let full = try await client.getMessage(id: ref.id, accessToken: accessToken)
+                upsertMessage(full, modelContext: modelContext)
+            }
+            try modelContext.save()
+            nextPageToken = listResponse.nextPageToken
         } catch {
             errorMessage = error.localizedDescription
         }
