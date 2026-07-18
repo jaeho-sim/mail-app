@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 import FirebaseFirestore
 
 @MainActor
@@ -24,16 +25,17 @@ final class SyncService: ObservableObject {
 
     func loadConfig(for userId: String) {
         isSyncing = true
-        db.collection("userConfigs").document(userId).getDocument { [weak self] snapshot, error in
-            guard let self else { return }
-            self.isSyncing = false
-            if let error {
-                self.errorMessage = error.localizedDescription
-                return
+        errorMessage = nil
+        Task {
+            defer { isSyncing = false }
+            do {
+                let snapshot = try await db.collection("userConfigs").document(userId).getDocument()
+                let data = snapshot.data()
+                signature = data?["signature"] as? String ?? ""
+                preferredTheme = data?["preferredTheme"] as? String ?? "system"
+            } catch {
+                errorMessage = error.localizedDescription
             }
-            let data = snapshot?.data()
-            self.signature = data?["signature"] as? String ?? ""
-            self.preferredTheme = data?["preferredTheme"] as? String ?? "system"
         }
     }
 
@@ -45,10 +47,12 @@ final class SyncService: ObservableObject {
             "preferredTheme": preferredTheme,
             "updatedAt": FieldValue.serverTimestamp(),
         ]
-        db.collection("userConfigs").document(userId).setData(data, merge: true) { [weak self] error in
-            self?.isSyncing = false
-            if let error {
-                self?.errorMessage = error.localizedDescription
+        Task {
+            defer { isSyncing = false }
+            do {
+                try await db.collection("userConfigs").document(userId).setData(data, merge: true)
+            } catch {
+                errorMessage = error.localizedDescription
             }
         }
     }
