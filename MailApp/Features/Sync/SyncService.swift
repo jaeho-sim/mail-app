@@ -17,6 +17,7 @@ final class SyncService: ObservableObject {
     @Published var signature: String = ""
     @Published var preferredTheme: String = "system"
     @Published var syncIntervalMinutes: Double = 5
+    @Published var favoriteMailboxes: [PinnedMailboxRef] = []
     @Published var isSyncing = false
     @Published var errorMessage: String?
 
@@ -36,6 +37,11 @@ final class SyncService: ObservableObject {
             signature = data?["signature"] as? String ?? ""
             preferredTheme = data?["preferredTheme"] as? String ?? "system"
             syncIntervalMinutes = data?["syncIntervalMinutes"] as? Double ?? 5
+            let favoritesData = data?["favoriteMailboxes"] as? [[String: String]] ?? []
+            favoriteMailboxes = favoritesData.compactMap { dict in
+                guard let email = dict["accountEmail"], let name = dict["mailboxName"] else { return nil }
+                return PinnedMailboxRef(accountEmail: email, mailboxName: name)
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -48,6 +54,9 @@ final class SyncService: ObservableObject {
             "signature": signature,
             "preferredTheme": preferredTheme,
             "syncIntervalMinutes": syncIntervalMinutes,
+            "favoriteMailboxes": favoriteMailboxes.map {
+                ["accountEmail": $0.accountEmail, "mailboxName": $0.mailboxName]
+            },
             "updatedAt": FieldValue.serverTimestamp(),
         ]
         Task {
@@ -58,5 +67,22 @@ final class SyncService: ObservableObject {
                 errorMessage = error.localizedDescription
             }
         }
+    }
+
+    // MARK: - Favorites
+
+    func isFavorite(_ ref: PinnedMailboxRef) -> Bool {
+        favoriteMailboxes.contains(ref)
+    }
+
+    func addFavorite(_ ref: PinnedMailboxRef, for userId: String) {
+        guard !favoriteMailboxes.contains(ref) else { return }
+        favoriteMailboxes.append(ref)
+        saveConfig(for: userId)
+    }
+
+    func removeFavorite(_ ref: PinnedMailboxRef, for userId: String) {
+        favoriteMailboxes.removeAll { $0 == ref }
+        saveConfig(for: userId)
     }
 }

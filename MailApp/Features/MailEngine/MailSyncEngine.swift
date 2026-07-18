@@ -49,6 +49,15 @@ final class MailSyncEngine: ObservableObject {
                 upsertMessage(full, accountEmail: accountEmail, modelContext: modelContext)
             }
 
+            // Flagged mail can live anywhere (archived, sent, etc.), not just the
+            // Inbox — fetch by the STARRED label directly so the Flagged smart
+            // mailbox reflects everything flagged, not just what's in the inbox.
+            let starredListResponse = try await client.listMessages(labelId: "STARRED", maxResults: pageSize, accessToken: accessToken)
+            for ref in starredListResponse.messages ?? [] {
+                let full = try await client.getMessage(id: ref.id, accessToken: accessToken)
+                upsertMessage(full, accountEmail: accountEmail, modelContext: modelContext)
+            }
+
             try modelContext.save()
             nextPageTokens[accountEmail] = listResponse.nextPageToken
             lastSyncedAt = .now
@@ -134,6 +143,7 @@ final class MailSyncEngine: ObservableObject {
         let isRead = !(gmailMessage.labelIds?.contains("UNREAD") ?? false)
         let isFlagged = gmailMessage.labelIds?.contains("STARRED") ?? false
         let receivedAt = Self.date(fromInternalDate: gmailMessage.internalDate) ?? .now
+        let mailboxName = Self.primaryMailboxName(for: gmailMessage.labelIds)
 
         if let existing = try? modelContext.fetch(descriptor).first {
             existing.subject = subject
@@ -143,6 +153,7 @@ final class MailSyncEngine: ObservableObject {
             existing.isFlagged = isFlagged
             existing.receivedAt = receivedAt
             existing.accountEmail = accountEmail
+            existing.mailboxName = mailboxName
             return
         }
 
@@ -154,11 +165,25 @@ final class MailSyncEngine: ObservableObject {
                 snippet: gmailMessage.snippet ?? "",
                 receivedAt: receivedAt,
                 isRead: isRead,
-                mailboxName: "INBOX",
+                mailboxName: mailboxName,
                 accountEmail: accountEmail,
                 isFlagged: isFlagged
             )
         )
+    }
+
+    /// Determines which "folder" a message belongs to from its actual labels,
+    /// rather than assuming INBOX — a flagged message might be archived, sent,
+    /// etc. "ARCHIVE" is a synthetic bucket (not a real Gmail label) for mail
+    /// that isn't in any of the traditional mailboxes.
+    private static func primaryMailboxName(for labelIds: [String]?) -> String {
+        let labels = Set(labelIds ?? [])
+        if labels.contains("INBOX") { return "INBOX" }
+        if labels.contains("SENT") { return "SENT" }
+        if labels.contains("DRAFT") { return "DRAFT" }
+        if labels.contains("TRASH") { return "TRASH" }
+        if labels.contains("SPAM") { return "SPAM" }
+        return "ARCHIVE"
     }
 
     private static func date(fromInternalDate value: String?) -> Date? {

@@ -40,6 +40,7 @@
 		B2535B1847F0453CB49172D3 /* GoogleOAuthTokenRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB78A9D7D1C4A11A306FB28 /* GoogleOAuthTokenRefresher.swift */; };
 		4F4F9AC9F7324CC0B26EAC54 /* AccountsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 395F5103A640420B89AD50CF /* AccountsManager.swift */; };
 		3BDEC8F798E242CB84ABCE81 /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD30E837D089497482C33E4E /* AccountsView.swift */; };
+		2141937AD7E3449D8D296281 /* PinnedMailboxRef.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4D9E4A6C5EB408FA5DCF5B5 /* PinnedMailboxRef.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,7 @@
 		3DB78A9D7D1C4A11A306FB28 /* GoogleOAuthTokenRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleOAuthTokenRefresher.swift; sourceTree = "<group>"; };
 		395F5103A640420B89AD50CF /* AccountsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsManager.swift; sourceTree = "<group>"; };
 		CD30E837D089497482C33E4E /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
+		B4D9E4A6C5EB408FA5DCF5B5 /* PinnedMailboxRef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMailboxRef.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -226,6 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				FDC98437D50C44FD97CD3A83 /* SidebarView.swift */,
+				B4D9E4A6C5EB408FA5DCF5B5 /* PinnedMailboxRef.swift */,
 				867767A8C5C04486BDAABC4A /* MessageListView.swift */,
 				737326DFFD8B470FA286CD79 /* MessageDetailView.swift */,
 				5EE097B0A20B4BC190892A1B /* SettingsView.swift */,
@@ -421,6 +424,7 @@
 					44C9A63E2C9D4611A2341CDB /* PeriodicSyncManager.swift in Sources */,
 					4EA08E8F3F1D400AA4965085 /* SignInView.swift in Sources */,
 					B7872980C8474B5588F92111 /* SidebarView.swift in Sources */,
+					2141937AD7E3449D8D296281 /* PinnedMailboxRef.swift in Sources */,
 					C3A8D768B87A4021BF3FA062 /* MessageListView.swift in Sources */,
 					D1B54545D18C4133898B6DC8 /* MessageDetailView.swift in Sources */,
 					A783E7FF9AC3498F81FEA3FF /* SettingsView.swift in Sources */,
