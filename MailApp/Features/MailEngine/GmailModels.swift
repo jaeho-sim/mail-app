@@ -30,13 +30,23 @@ struct GmailMessage: Decodable {
 
 struct GmailPayload: Decodable {
     let mimeType: String?
+    let filename: String?
     let headers: [GmailHeader]?
     let body: GmailPartBody?
     let parts: [GmailPayload]?
 }
 
 /// Gmail base64url-encodes the actual body content; `size` is informational.
+/// `attachmentId` is present on attachment parts (their `data` is omitted
+/// here and must be fetched separately via `messages/{id}/attachments/{attachmentId}`).
 struct GmailPartBody: Decodable {
+    let attachmentId: String?
+    let size: Int?
+    let data: String?
+}
+
+/// Response shape of `GET messages/{messageId}/attachments/{attachmentId}`.
+struct GmailAttachmentPayload: Decodable {
     let size: Int?
     let data: String?
 }

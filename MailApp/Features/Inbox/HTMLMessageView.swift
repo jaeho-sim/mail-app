@@ -45,6 +45,31 @@ struct HTMLMessageView: View {
     }
 }
 
+/// Many HTML emails use fixed-width layouts (tables, divs with hardcoded
+/// pixel widths) that plain `max-width: 100%` CSS doesn't catch, so content
+/// can end up wider than the screen and get clipped since the web view's own
+/// scrolling is disabled. This measures the actual rendered content width
+/// against the viewport and, if it overflows, scales the whole page down to
+/// fit — then reports back the resulting (scaled) height so the SwiftUI
+/// frame around the web view sizes correctly with nothing cut off.
+private let fitToScreenAndMeasureJS = """
+(function() {
+  var doc = document.documentElement;
+  var body = document.body;
+  var contentWidth = Math.max(body.scrollWidth, doc.scrollWidth);
+  var viewportWidth = doc.clientWidth;
+  var scale = 1;
+  if (contentWidth > viewportWidth && contentWidth > 0) {
+    scale = viewportWidth / contentWidth;
+    body.style.transformOrigin = 'top left';
+    body.style.transform = 'scale(' + scale + ')';
+    body.style.width = contentWidth + 'px';
+  }
+  var contentHeight = Math.max(body.scrollHeight, doc.scrollHeight);
+  return contentHeight * scale;
+})();
+"""
+
 #if os(iOS)
 import UIKit
 
@@ -80,7 +105,7 @@ private struct HTMLWebView: UIViewRepresentable {
         init(height: Binding<CGFloat>) { _height = height }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            webView.evaluateJavaScript("document.documentElement.scrollHeight") { [weak self] result, _ in
+            webView.evaluateJavaScript(fitToScreenAndMeasureJS) { [weak self] result, _ in
                 guard let number = result as? NSNumber else { return }
                 DispatchQueue.main.async { self?.height = CGFloat(truncating: number) }
             }
@@ -132,7 +157,7 @@ private struct HTMLWebView: NSViewRepresentable {
         init(height: Binding<CGFloat>) { _height = height }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            webView.evaluateJavaScript("document.documentElement.scrollHeight") { [weak self] result, _ in
+            webView.evaluateJavaScript(fitToScreenAndMeasureJS) { [weak self] result, _ in
                 guard let number = result as? NSNumber else { return }
                 DispatchQueue.main.async { self?.height = CGFloat(truncating: number) }
             }

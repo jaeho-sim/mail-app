@@ -105,16 +105,35 @@ final class MailSyncEngine: ObservableObject {
     /// plain text as fallback) — called when the message is opened in the
     /// reading pane, not during the list sync. No-op if already cached.
     func fetchBody(for message: Message, accessToken: String, modelContext: ModelContext) async {
-        guard message.htmlBody == nil, message.plainTextBody == nil else { return }
+        guard !message.hasFetchedFullBody else { return }
         do {
             let full = try await client.getFullMessage(id: message.messageId, accessToken: accessToken)
             let (html, plain) = Self.extractBody(from: full.payload)
-            message.htmlBody = html
+            if let html, let payload = full.payload {
+                // WKWebView can't resolve Gmail's cid: scheme for inline images
+                // on its own, so swap any small inlined images in for data URIs.
+                let inlineImages = Self.collectInlineImages(from: payload)
+                message.htmlBody = Self.resolveCIDReferences(in: html, inlineImages: inlineImages)
+            } else {
+                message.htmlBody = html
+            }
             message.plainTextBody = plain
+            message.attachments = Self.extractAttachments(from: full.payload)
+            message.hasFetchedFullBody = true
             try? modelContext.save()
         } catch {
-            // Leave the snippet as the fallback; not worth surfacing an alert for.
+            errorMessage = "Couldn't load message content: \(error.localizedDescription)"
         }
+    }
+
+    /// Downloads one attachment's bytes on demand (not cached locally beyond
+    /// the caller's use — the metadata in Message.attachments is what's cached).
+    func downloadAttachment(messageId: String, attachmentId: String, accessToken: String) async throws -> Data {
+        let payload = try await client.getAttachment(messageId: messageId, attachmentId: attachmentId, accessToken: accessToken)
+        guard let dataString = payload.data, let data = Self.decodeBase64URLData(dataString) else {
+            throw GmailAPIError.invalidResponse
+        }
+        return data
     }
 
     /// Walks the (possibly nested, multipart/alternative or multipart/mixed)
@@ -125,10 +144,11 @@ final class MailSyncEngine: ObservableObject {
         var plain: String?
 
         func walk(_ part: GmailPayload) {
+            let mimeType = part.mimeType?.lowercased() ?? ""
             if html == nil || plain == nil, let data = part.body?.data, let decoded = decodeBase64URL(data) {
-                if part.mimeType == "text/html", html == nil {
+                if mimeType.hasPrefix("text/html"), html == nil {
                     html = decoded
-                } else if part.mimeType == "text/plain", plain == nil {
+                } else if mimeType.hasPrefix("text/plain"), plain == nil {
                     plain = decoded
                 }
             }
@@ -140,13 +160,75 @@ final class MailSyncEngine: ObservableObject {
         return (html, plain)
     }
 
+    /// Any MIME part with a non-empty filename is treated as an attachment
+    /// (this also catches inline images, same as Mail.app does). Only parts
+    /// Gmail assigned an attachmentId to can actually be downloaded later.
+    private static func extractAttachments(from payload: GmailPayload?) -> [MessageAttachmentInfo] {
+        guard let payload else { return [] }
+        var found: [MessageAttachmentInfo] = []
+
+        func walk(_ part: GmailPayload) {
+            if let filename = part.filename, !filename.isEmpty, let attachmentId = part.body?.attachmentId {
+                found.append(
+                    MessageAttachmentInfo(
+                        attachmentId: attachmentId,
+                        filename: filename,
+                        mimeType: part.mimeType ?? "application/octet-stream",
+                        size: part.body?.size ?? 0
+                    )
+                )
+            }
+            for sub in part.parts ?? [] {
+                walk(sub)
+            }
+        }
+        walk(payload)
+        return found
+    }
+
+    /// Collects small inline images (the kind referenced via `cid:` in the
+    /// HTML body, identified by a Content-ID header) that Gmail inlined
+    /// directly in the full-format response, keyed by their Content-ID with
+    /// the angle brackets stripped.
+    private static func collectInlineImages(from payload: GmailPayload) -> [String: String] {
+        var found: [String: String] = [:]
+
+        func walk(_ part: GmailPayload) {
+            if let mimeType = part.mimeType, mimeType.hasPrefix("image/"),
+               let contentId = part.headers?.first(where: { $0.name.caseInsensitiveCompare("Content-ID") == .orderedSame })?.value,
+               let dataString = part.body?.data,
+               let decoded = decodeBase64URLData(dataString) {
+                let key = contentId.trimmingCharacters(in: CharacterSet(charactersIn: "<>"))
+                found[key] = "data:\(mimeType);base64,\(decoded.base64EncodedString())"
+            }
+            for sub in part.parts ?? [] {
+                walk(sub)
+            }
+        }
+        walk(payload)
+        return found
+    }
+
+    private static func resolveCIDReferences(in html: String, inlineImages: [String: String]) -> String {
+        guard !inlineImages.isEmpty else { return html }
+        var result = html
+        for (key, dataURI) in inlineImages {
+            result = result.replacingOccurrences(of: "cid:\(key)", with: dataURI)
+        }
+        return result
+    }
+
     /// Gmail encodes body content as base64url (`-`/`_` instead of `+`/`/`,
     /// no padding) rather than standard base64.
     private static func decodeBase64URL(_ value: String) -> String? {
+        guard let data = decodeBase64URLData(value) else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
+    private static func decodeBase64URLData(_ value: String) -> Data? {
         var base64 = value.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
         while base64.count % 4 != 0 { base64.append("=") }
-        guard let data = Data(base64Encoded: base64) else { return nil }
-        return String(data: data, encoding: .utf8)
+        return Data(base64Encoded: base64)
     }
 
     /// Gmail returns every system label (STARRED, IMPORTANT, UNREAD, the inbox

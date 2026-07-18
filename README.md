@@ -38,5 +38,5 @@ See `SETUP.md` for the full Phase 0 checklist (Xcode, Apple Developer Program, G
 - [ ] Phase 3: Core mail engine (Gmail)
 - [ ] Phase 4: UI
 - [ ] Phase 5: Performance & reliability
-- [ ] Phase 6: Testing & App Store submission
+- [~] Phase 6: Shipping — Mac notarized DMG (Firebase Storage) + iOS public App Store (see `docs/PHASE6-SHIPPING.md`)
 - [ ] Phase 7: Post-launch (Microsoft/Outlook support)

@@ -64,6 +64,15 @@ struct GmailAPIClient {
         return try await get(components.url!, accessToken: accessToken)
     }
 
+    /// Fetches one attachment's base64url-encoded bytes. Larger attachments
+    /// aren't inlined in `getFullMessage`'s response — only their metadata
+    /// (filename, mimeType, attachmentId) is, so this is a separate call
+    /// fired when the user actually chooses to download an attachment.
+    func getAttachment(messageId: String, attachmentId: String, accessToken: String) async throws -> GmailAttachmentPayload {
+        let url = baseURL.appendingPathComponent("messages/\(messageId)/attachments/\(attachmentId)")
+        return try await get(url, accessToken: accessToken)
+    }
+
     func listLabels(accessToken: String) async throws -> GmailListLabelsResponse {
         try await get(baseURL.appendingPathComponent("labels"), accessToken: accessToken)
     }

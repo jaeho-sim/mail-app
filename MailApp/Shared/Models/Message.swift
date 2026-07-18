@@ -26,6 +26,15 @@ final class Message {
     // plainTextBody is the fallback for messages with no HTML part.
     var htmlBody: String?
     var plainTextBody: String?
+    // Attachment metadata, populated alongside htmlBody/plainTextBody on the
+    // same lazy full-body fetch. Actual bytes are downloaded on demand.
+    var attachments: [MessageAttachmentInfo] = []
+    // Whether the full-body fetch has run at all. This is the actual gate for
+    // re-fetching — separate from htmlBody/plainTextBody being nil — so that
+    // improvements to what we extract (e.g. attachments added after a message
+    // was already opened once) get backfilled the next time it's opened,
+    // instead of being skipped forever just because a body was already cached.
+    var hasFetchedFullBody: Bool = false
 
     init(
         messageId: String,
@@ -38,7 +47,9 @@ final class Message {
         accountEmail: String,
         isFlagged: Bool = false,
         htmlBody: String? = nil,
-        plainTextBody: String? = nil
+        plainTextBody: String? = nil,
+        attachments: [MessageAttachmentInfo] = [],
+        hasFetchedFullBody: Bool = false
     ) {
         self.messageId = messageId
         self.subject = subject
@@ -51,5 +62,7 @@ final class Message {
         self.isFlagged = isFlagged
         self.htmlBody = htmlBody
         self.plainTextBody = plainTextBody
+        self.attachments = attachments
+        self.hasFetchedFullBody = hasFetchedFullBody
     }
 }

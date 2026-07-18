@@ -28,3 +28,12 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Release build artifacts (scripts/build_and_notarize_mac.sh output)
+build/
+*.dmg
+*.xcarchive
+
+# Firebase service account keys — never commit these
+*firebase*key*.json
+serviceAccountKey.json

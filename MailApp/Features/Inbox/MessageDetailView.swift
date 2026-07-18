@@ -51,6 +51,15 @@ struct MessageDetailView: View {
                     Divider()
 
                     bodyContent(for: message)
+
+                    if !message.attachments.isEmpty {
+                        Divider()
+                        AttachmentsSection(
+                            messageId: message.messageId,
+                            accountEmail: message.accountEmail,
+                            attachments: message.attachments
+                        )
+                    }
                 }
                 .padding(24)
             }
@@ -88,12 +97,26 @@ struct MessageDetailView: View {
     }
 
     private func loadBodyIfNeeded(_ message: Message) async {
-        guard message.htmlBody == nil, message.plainTextBody == nil else { return }
+        guard !message.hasFetchedFullBody else { return }
         isFetchingBody = true
         defer { isFetchingBody = false }
-        guard let token = try? await AccountsManager.shared.accessToken(forAccountEmail: message.accountEmail) else {
-            return
+
+        // Runs as its own unstructured task so a quick view-lifecycle change
+        // (switching messages, navigating back) — which cancels this view's
+        // .task — doesn't kill the network call mid-flight. The fetch keeps
+        // running in the background and the body is cached for next time.
+        let accountEmail = message.accountEmail
+        let fetch = Task {
+            let token = try await AccountsManager.shared.accessToken(forAccountEmail: accountEmail)
+            await MailSyncEngine.shared.fetchBody(for: message, accessToken: token, modelContext: modelContext)
         }
-        await MailSyncEngine.shared.fetchBody(for: message, accessToken: token, modelContext: modelContext)
+        do {
+            try await fetch.value
+        } catch {
+            let isCancellation = (error is CancellationError) || (error as? URLError)?.code == .cancelled
+            if !isCancellation {
+                MailSyncEngine.shared.errorMessage = "Couldn't refresh access for \(accountEmail): \(error.localizedDescription)"
+            }
+        }
     }
 }
