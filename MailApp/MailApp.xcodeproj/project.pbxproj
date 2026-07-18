@@ -26,6 +26,13 @@
 		35F836D535364D29A1395BC3 /* GmailModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49DB1E4A6B442A09DD4BCB0 /* GmailModels.swift */; };
 		BDC75770DB6342E99599D594 /* GmailAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82204BDAA784ABF8D20A749 /* GmailAPIClient.swift */; };
 		1E906B6247774BC2BC42536E /* MailSyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEB0AD9384C699DCA885E /* MailSyncEngine.swift */; };
+		4EA08E8F3F1D400AA4965085 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF15277A7404B409D0F2F55 /* SignInView.swift */; };
+		B7872980C8474B5588F92111 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC98437D50C44FD97CD3A83 /* SidebarView.swift */; };
+		C3A8D768B87A4021BF3FA062 /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867767A8C5C04486BDAABC4A /* MessageListView.swift */; };
+		D1B54545D18C4133898B6DC8 /* MessageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737326DFFD8B470FA286CD79 /* MessageDetailView.swift */; };
+		A783E7FF9AC3498F81FEA3FF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE097B0A20B4BC190892A1B /* SettingsView.swift */; };
+		6B76E65659D44BE0A34A97D0 /* MailRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E6DB3B08712466E9FB607C7 /* MailRootView.swift */; };
+		1502C3AC0306401DA96158A7 /* ComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98A5C14E2AF4ED0A1F6106A /* ComposeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +70,13 @@
 		B49DB1E4A6B442A09DD4BCB0 /* GmailModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailModels.swift; sourceTree = "<group>"; };
 		E82204BDAA784ABF8D20A749 /* GmailAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailAPIClient.swift; sourceTree = "<group>"; };
 		35CDEB0AD9384C699DCA885E /* MailSyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailSyncEngine.swift; sourceTree = "<group>"; };
+		EDF15277A7404B409D0F2F55 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		FDC98437D50C44FD97CD3A83 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		867767A8C5C04486BDAABC4A /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
+		737326DFFD8B470FA286CD79 /* MessageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDetailView.swift; sourceTree = "<group>"; };
+		5EE097B0A20B4BC190892A1B /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		0E6DB3B08712466E9FB607C7 /* MailRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailRootView.swift; sourceTree = "<group>"; };
+		E98A5C14E2AF4ED0A1F6106A /* ComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -156,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				A824C70697B44756B416918B /* AuthManager.swift */,
+				EDF15277A7404B409D0F2F55 /* SignInView.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -174,6 +189,8 @@
 				97F55812711549668ABAEC79 /* Auth */,
 				585E87AC90FB4B8DB6AEFEAA /* Sync */,
 				9F926464885E41B6972C4BF9 /* MailEngine */,
+				235510C92ECF4593B3A39721 /* Inbox */,
+				E4A7B1DC1A8C4D6FBBC52E0E /* Compose */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -186,6 +203,26 @@
 				35CDEB0AD9384C699DCA885E /* MailSyncEngine.swift */,
 			);
 			path = MailEngine;
+			sourceTree = "<group>";
+		};
+		235510C92ECF4593B3A39721 /* Inbox */ = {
+			isa = PBXGroup;
+			children = (
+				FDC98437D50C44FD97CD3A83 /* SidebarView.swift */,
+				867767A8C5C04486BDAABC4A /* MessageListView.swift */,
+				737326DFFD8B470FA286CD79 /* MessageDetailView.swift */,
+				5EE097B0A20B4BC190892A1B /* SettingsView.swift */,
+				0E6DB3B08712466E9FB607C7 /* MailRootView.swift */,
+			);
+			path = Inbox;
+			sourceTree = "<group>";
+		};
+		E4A7B1DC1A8C4D6FBBC52E0E /* Compose */ = {
+			isa = PBXGroup;
+			children = (
+				E98A5C14E2AF4ED0A1F6106A /* ComposeView.swift */,
+			);
+			path = Compose;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -352,6 +389,13 @@
 					35F836D535364D29A1395BC3 /* GmailModels.swift in Sources */,
 					BDC75770DB6342E99599D594 /* GmailAPIClient.swift in Sources */,
 					1E906B6247774BC2BC42536E /* MailSyncEngine.swift in Sources */,
+					4EA08E8F3F1D400AA4965085 /* SignInView.swift in Sources */,
+					B7872980C8474B5588F92111 /* SidebarView.swift in Sources */,
+					C3A8D768B87A4021BF3FA062 /* MessageListView.swift in Sources */,
+					D1B54545D18C4133898B6DC8 /* MessageDetailView.swift in Sources */,
+					A783E7FF9AC3498F81FEA3FF /* SettingsView.swift in Sources */,
+					6B76E65659D44BE0A34A97D0 /* MailRootView.swift in Sources */,
+					1502C3AC0306401DA96158A7 /* ComposeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
