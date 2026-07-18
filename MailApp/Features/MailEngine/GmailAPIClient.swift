@@ -53,6 +53,17 @@ struct GmailAPIClient {
         return try await get(components.url!, accessToken: accessToken)
     }
 
+    /// Fetches the full MIME structure (headers + body parts), for lazily
+    /// loading a message's HTML/plain-text content when it's opened in the
+    /// reading pane. `getMessage` above stays on `format=metadata` for the
+    /// list sync, since fetching full bodies for every inbox message would
+    /// be slow and unnecessary.
+    func getFullMessage(id: String, accessToken: String) async throws -> GmailMessage {
+        var components = URLComponents(url: baseURL.appendingPathComponent("messages/\(id)"), resolvingAgainstBaseURL: false)!
+        components.queryItems = [URLQueryItem(name: "format", value: "full")]
+        return try await get(components.url!, accessToken: accessToken)
+    }
+
     func listLabels(accessToken: String) async throws -> GmailListLabelsResponse {
         try await get(baseURL.appendingPathComponent("labels"), accessToken: accessToken)
     }

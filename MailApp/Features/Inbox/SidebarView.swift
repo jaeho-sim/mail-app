@@ -9,6 +9,7 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseAuth
 
 struct SidebarView: View {
     let accounts: [Account]

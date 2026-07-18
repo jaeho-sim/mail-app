@@ -29,7 +29,16 @@ struct GmailMessage: Decodable {
 }
 
 struct GmailPayload: Decodable {
+    let mimeType: String?
     let headers: [GmailHeader]?
+    let body: GmailPartBody?
+    let parts: [GmailPayload]?
+}
+
+/// Gmail base64url-encodes the actual body content; `size` is informational.
+struct GmailPartBody: Decodable {
+    let size: Int?
+    let data: String?
 }
 
 struct GmailHeader: Decodable {

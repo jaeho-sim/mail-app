@@ -101,6 +101,54 @@ final class MailSyncEngine: ObservableObject {
         }
     }
 
+    /// Lazily fetches and caches one message's full body (HTML preferred,
+    /// plain text as fallback) — called when the message is opened in the
+    /// reading pane, not during the list sync. No-op if already cached.
+    func fetchBody(for message: Message, accessToken: String, modelContext: ModelContext) async {
+        guard message.htmlBody == nil, message.plainTextBody == nil else { return }
+        do {
+            let full = try await client.getFullMessage(id: message.messageId, accessToken: accessToken)
+            let (html, plain) = Self.extractBody(from: full.payload)
+            message.htmlBody = html
+            message.plainTextBody = plain
+            try? modelContext.save()
+        } catch {
+            // Leave the snippet as the fallback; not worth surfacing an alert for.
+        }
+    }
+
+    /// Walks the (possibly nested, multipart/alternative or multipart/mixed)
+    /// MIME tree looking for the first text/html and text/plain leaf parts.
+    private static func extractBody(from payload: GmailPayload?) -> (html: String?, plain: String?) {
+        guard let payload else { return (nil, nil) }
+        var html: String?
+        var plain: String?
+
+        func walk(_ part: GmailPayload) {
+            if html == nil || plain == nil, let data = part.body?.data, let decoded = decodeBase64URL(data) {
+                if part.mimeType == "text/html", html == nil {
+                    html = decoded
+                } else if part.mimeType == "text/plain", plain == nil {
+                    plain = decoded
+                }
+            }
+            for sub in part.parts ?? [] {
+                walk(sub)
+            }
+        }
+        walk(payload)
+        return (html, plain)
+    }
+
+    /// Gmail encodes body content as base64url (`-`/`_` instead of `+`/`/`,
+    /// no padding) rather than standard base64.
+    private static func decodeBase64URL(_ value: String) -> String? {
+        var base64 = value.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        while base64.count % 4 != 0 { base64.append("=") }
+        guard let data = Data(base64Encoded: base64) else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
     /// Gmail returns every system label (STARRED, IMPORTANT, UNREAD, the inbox
     /// tab categories, CHAT, etc.) alongside real folders. Only the traditional
     /// mailbox-style system labels and genuine user-created labels belong in

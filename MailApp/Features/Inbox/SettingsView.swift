@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import FirebaseAuth
 
 private let syncIntervalOptions: [Double] = [1, 5, 15, 30, 60]
