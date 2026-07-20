@@ -19,11 +19,22 @@ final class Account {
     var displayName: String
     var provider: AccountProvider
     var createdAt: Date
+    // Tracks whether this account's first sync (which downloads the existing
+    // backlog) has happened yet — used to suppress "new mail" notifications
+    // for mail that isn't actually new, just newly synced.
+    var hasCompletedInitialSync: Bool = false
 
-    init(email: String, displayName: String, provider: AccountProvider, createdAt: Date = .now) {
+    init(
+        email: String,
+        displayName: String,
+        provider: AccountProvider,
+        createdAt: Date = .now,
+        hasCompletedInitialSync: Bool = false
+    ) {
         self.email = email
         self.displayName = displayName
         self.provider = provider
         self.createdAt = createdAt
+        self.hasCompletedInitialSync = hasCompletedInitialSync
     }
 }

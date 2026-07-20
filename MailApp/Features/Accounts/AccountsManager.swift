@@ -105,6 +105,8 @@ final class AccountsManager: ObservableObject {
                 accessToken: result.user.accessToken.tokenString,
                 modelContext: modelContext
             )
+
+            NotificationManager.shared.requestAuthorizationIfNeeded()
         } catch {
             errorMessage = error.localizedDescription
         }

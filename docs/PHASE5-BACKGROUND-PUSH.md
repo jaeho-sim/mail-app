@@ -1,8 +1,12 @@
-# Deferred: True Background Refresh + Push Notifications
+# Deferred: True Background Refresh + Remote Push Notifications
 
 Phase 5 shipped a foreground "keep fresh" timer (`PeriodicSyncManager`) and Gmail
-pagination — both work today with no extra setup. This document is the plan for
-the parts that need the Apple Developer Program, which isn't active yet.
+pagination. As of the Apple Developer Program being active, `NotificationManager`
+now posts **local** notifications for new unread inbox mail and sync errors —
+but only while the app is actually running (foreground or briefly backgrounded).
+It won't fire while the app is fully closed or suspended. This document is the
+plan for *that* — true background delivery via APNs — which needs a server
+component and, for iOS specifically, more Apple/Google account setup.
 
 ## Why this is deferred
 

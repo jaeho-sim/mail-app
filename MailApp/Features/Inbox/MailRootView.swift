@@ -77,6 +77,7 @@ struct MailRootView: View {
         .task {
             if !accounts.isEmpty {
                 await syncAll()
+                NotificationManager.shared.requestAuthorizationIfNeeded()
             }
             if let user = auth.currentUser {
                 await syncService.loadConfig(for: user.uid)

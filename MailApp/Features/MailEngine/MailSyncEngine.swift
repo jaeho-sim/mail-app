@@ -36,6 +36,15 @@ final class MailSyncEngine: ObservableObject {
         defer { isSyncing = false }
 
         do {
+            // Whether this account has ever finished a sync before — if not,
+            // everything we're about to fetch is the existing backlog, not
+            // "new mail", so we suppress notifications for this pass and
+            // flip the flag so future syncs do notify.
+            let accountDescriptor = FetchDescriptor<Account>(predicate: #Predicate { $0.email == accountEmail })
+            let account = try? modelContext.fetch(accountDescriptor).first
+            let wasInitialSyncComplete = account?.hasCompletedInitialSync ?? false
+            account?.hasCompletedInitialSync = true
+
             let labelsResponse = try await client.listLabels(accessToken: accessToken)
             let keptLabels = labelsResponse.labels.filter(Self.isSidebarWorthy)
             for label in keptLabels {
@@ -43,10 +52,13 @@ final class MailSyncEngine: ObservableObject {
             }
             removeStaleMailboxes(keeping: keptLabels.map(\.name), accountEmail: accountEmail, modelContext: modelContext)
 
+            var newlyArrivedMessages: [Message] = []
             let listResponse = try await client.listMessages(labelId: "INBOX", maxResults: pageSize, accessToken: accessToken)
             for ref in listResponse.messages ?? [] {
                 let full = try await client.getMessage(id: ref.id, accessToken: accessToken)
-                upsertMessage(full, accountEmail: accountEmail, modelContext: modelContext)
+                if let inserted = upsertMessage(full, accountEmail: accountEmail, modelContext: modelContext), !inserted.isRead {
+                    newlyArrivedMessages.append(inserted)
+                }
             }
 
             // Flagged mail can live anywhere (archived, sent, etc.), not just the
@@ -61,8 +73,13 @@ final class MailSyncEngine: ObservableObject {
             try modelContext.save()
             nextPageTokens[accountEmail] = listResponse.nextPageToken
             lastSyncedAt = .now
+
+            if wasInitialSyncComplete {
+                NotificationManager.shared.notifyNewMessages(newlyArrivedMessages)
+            }
         } catch {
             errorMessage = error.localizedDescription
+            NotificationManager.shared.notifySyncError(error.localizedDescription)
         }
     }
 
@@ -263,7 +280,11 @@ final class MailSyncEngine: ObservableObject {
         }
     }
 
-    private func upsertMessage(_ gmailMessage: GmailMessage, accountEmail: String, modelContext: ModelContext) {
+    /// Returns the new Message only when one was actually inserted (nil for
+    /// an update to an already-cached message) — callers use this to detect
+    /// genuinely new mail for notifications, without double-counting updates.
+    @discardableResult
+    private func upsertMessage(_ gmailMessage: GmailMessage, accountEmail: String, modelContext: ModelContext) -> Message? {
         let id = gmailMessage.id
         let descriptor = FetchDescriptor<Message>(predicate: #Predicate { $0.messageId == id })
 
@@ -284,22 +305,22 @@ final class MailSyncEngine: ObservableObject {
             existing.receivedAt = receivedAt
             existing.accountEmail = accountEmail
             existing.mailboxName = mailboxName
-            return
+            return nil
         }
 
-        modelContext.insert(
-            Message(
-                messageId: id,
-                subject: subject,
-                sender: sender,
-                snippet: gmailMessage.snippet ?? "",
-                receivedAt: receivedAt,
-                isRead: isRead,
-                mailboxName: mailboxName,
-                accountEmail: accountEmail,
-                isFlagged: isFlagged
-            )
+        let message = Message(
+            messageId: id,
+            subject: subject,
+            sender: sender,
+            snippet: gmailMessage.snippet ?? "",
+            receivedAt: receivedAt,
+            isRead: isRead,
+            mailboxName: mailboxName,
+            accountEmail: accountEmail,
+            isFlagged: isFlagged
         )
+        modelContext.insert(message)
+        return message
     }
 
     /// Determines which "folder" a message belongs to from its actual labels,

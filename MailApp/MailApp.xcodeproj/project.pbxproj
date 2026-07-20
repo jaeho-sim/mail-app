@@ -44,6 +44,7 @@
 		6FF1A587AC544E36A759F2B7 /* HTMLMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D526EA360B24D42B84A35A3 /* HTMLMessageView.swift */; };
 		92F45B6369044F4EB9128803 /* MessageAttachmentInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A647C6451FA49BDA3F6D535 /* MessageAttachmentInfo.swift */; };
 		9D6237E8175E466C8F9AFE62 /* AttachmentsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF8F7403C0B461596407F45 /* AttachmentsSection.swift */; };
+		DA7108C71BBE4A17A3B1A87C /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BE84879B704BA894285C63 /* NotificationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +100,7 @@
 		4D526EA360B24D42B84A35A3 /* HTMLMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLMessageView.swift; sourceTree = "<group>"; };
 		9A647C6451FA49BDA3F6D535 /* MessageAttachmentInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAttachmentInfo.swift; sourceTree = "<group>"; };
 		6DF8F7403C0B461596407F45 /* AttachmentsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsSection.swift; sourceTree = "<group>"; };
+		E5BE84879B704BA894285C63 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -226,6 +228,7 @@
 				B49DB1E4A6B442A09DD4BCB0 /* GmailModels.swift */,
 				E82204BDAA784ABF8D20A749 /* GmailAPIClient.swift */,
 				35CDEB0AD9384C699DCA885E /* MailSyncEngine.swift */,
+				E5BE84879B704BA894285C63 /* NotificationManager.swift */,
 				F5DD24866C1D42FABED278AB /* PeriodicSyncManager.swift */,
 			);
 			path = MailEngine;
@@ -431,6 +434,7 @@
 					35F836D535364D29A1395BC3 /* GmailModels.swift in Sources */,
 					BDC75770DB6342E99599D594 /* GmailAPIClient.swift in Sources */,
 					1E906B6247774BC2BC42536E /* MailSyncEngine.swift in Sources */,
+					DA7108C71BBE4A17A3B1A87C /* NotificationManager.swift in Sources */,
 					44C9A63E2C9D4611A2341CDB /* PeriodicSyncManager.swift in Sources */,
 					4EA08E8F3F1D400AA4965085 /* SignInView.swift in Sources */,
 					B7872980C8474B5588F92111 /* SidebarView.swift in Sources */,
