@@ -11,6 +11,7 @@ import Foundation
 import Combine
 import SwiftData
 import FirebaseCore
+import FirebaseMessaging
 import GoogleSignIn
 
 enum AccountsManagerError: LocalizedError {
@@ -107,14 +108,23 @@ final class AccountsManager: ObservableObject {
             )
 
             NotificationManager.shared.requestAuthorizationIfNeeded()
+
+            let refreshedAccount = try? modelContext.fetch(descriptor).first
+            if let refreshedAccount, let fcmToken = Messaging.messaging().fcmToken {
+                await PushRegistrar.shared.register(account: refreshedAccount, fcmToken: fcmToken, modelContext: modelContext)
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 
-    /// Removes a connected account: deletes its Keychain token and its local
-    /// Account/Mailbox/Message records. Does not touch the app's sign-in identity.
-    func removeAccount(_ account: Account, modelContext: ModelContext) {
+    /// Removes a connected account: cancels its push subscription, then
+    /// deletes its Keychain token and local Account/Mailbox/Message records.
+    /// Does not touch the app's sign-in identity.
+    func removeAccount(_ account: Account, modelContext: ModelContext) async {
+        // Unregister push while the Keychain token still exists — it needs a
+        // valid access token to tell Gmail to stop watching this mailbox.
+        await PushRegistrar.shared.unregister(email: account.email, modelContext: modelContext)
         KeychainStore.deleteRefreshToken(forAccount: account.email)
 
         let email = account.email

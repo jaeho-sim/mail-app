@@ -37,3 +37,10 @@ build/
 # Firebase service account keys — never commit these
 *firebase*key*.json
 serviceAccountKey.json
+
+# Cloud Functions (server/functions)
+server/functions/node_modules/
+server/functions/lib/
+.firebase/
+firebase-debug.log
+firestore-debug.log

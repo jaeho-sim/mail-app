@@ -2,11 +2,13 @@
 //  PeriodicSyncManager.swift
 //  MailApp
 //
-//  Re-syncs all connected accounts on a timer while the app is open (foreground/running).
-//  This is NOT true background execution — the app must be alive for it to fire.
-//  Real background refresh (app suspended/closed) needs iOS's BGTaskScheduler,
-//  and live push needs APNs — both require the Apple Developer Program, which
-//  isn't active yet. See docs/PHASE5-BACKGROUND-PUSH.md for that plan.
+//  Re-syncs all connected accounts on a timer while the app is open
+//  (foreground/running) — this is NOT true background execution, the app
+//  must be alive for it to fire. It also opportunistically renews each
+//  account's Gmail push "watch" and Firestore push subscription (see
+//  PushRegistrar) so remote push keeps working without needing its own
+//  separate schedule. See docs/PHASE5-BACKGROUND-PUSH.md for the full
+//  background/push picture.
 //
 
 import Foundation
@@ -42,5 +44,6 @@ final class PeriodicSyncManager {
         let accounts = (try? modelContext.fetch(FetchDescriptor<Account>())) ?? []
         guard !accounts.isEmpty else { return }
         await MailSyncEngine.shared.syncAllAccounts(accounts, modelContext: modelContext)
+        await PushRegistrar.shared.registerAllAccounts(modelContext: modelContext)
     }
 }

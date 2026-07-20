@@ -58,8 +58,11 @@ struct AccountsView: View {
     }
 
     private func removeAccounts(at offsets: IndexSet) {
-        for index in offsets {
-            accountsManager.removeAccount(accounts[index], modelContext: modelContext)
+        let toRemove = offsets.map { accounts[$0] }
+        Task {
+            for account in toRemove {
+                await accountsManager.removeAccount(account, modelContext: modelContext)
+            }
         }
     }
 }

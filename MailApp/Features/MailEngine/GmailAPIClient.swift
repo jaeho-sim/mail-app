@@ -73,6 +73,22 @@ struct GmailAPIClient {
         return try await get(url, accessToken: accessToken)
     }
 
+    /// Registers this mailbox for push notifications: Gmail publishes a
+    /// message to the given Cloud Pub/Sub topic whenever it changes. Watches
+    /// expire after ~7 days (see `GmailWatchResponse.expiration`) and must
+    /// be renewed by calling this again.
+    func watchMailbox(topicName: String, accessToken: String) async throws -> GmailWatchResponse {
+        let url = baseURL.appendingPathComponent("watch")
+        let body: [String: Any] = ["topicName": topicName, "labelIds": ["INBOX"]]
+        return try await post(url, body: body, accessToken: accessToken)
+    }
+
+    /// Cancels any active watch on this mailbox — called when disconnecting an account.
+    func stopWatchingMailbox(accessToken: String) async throws {
+        let url = baseURL.appendingPathComponent("stop")
+        let _: EmptyResponse = try await post(url, body: [:], accessToken: accessToken)
+    }
+
     func listLabels(accessToken: String) async throws -> GmailListLabelsResponse {
         try await get(baseURL.appendingPathComponent("labels"), accessToken: accessToken)
     }

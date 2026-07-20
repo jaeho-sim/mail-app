@@ -23,18 +23,24 @@ final class Account {
     // backlog) has happened yet — used to suppress "new mail" notifications
     // for mail that isn't actually new, just newly synced.
     var hasCompletedInitialSync: Bool = false
+    // When Gmail's push "watch" on this mailbox expires (watches last ~7
+    // days and must be renewed). Nil means we've never successfully watched
+    // it — remote push notifications won't arrive until we do.
+    var watchExpiration: Date?
 
     init(
         email: String,
         displayName: String,
         provider: AccountProvider,
         createdAt: Date = .now,
-        hasCompletedInitialSync: Bool = false
+        hasCompletedInitialSync: Bool = false,
+        watchExpiration: Date? = nil
     ) {
         self.email = email
         self.displayName = displayName
         self.provider = provider
         self.createdAt = createdAt
         self.hasCompletedInitialSync = hasCompletedInitialSync
+        self.watchExpiration = watchExpiration
     }
 }

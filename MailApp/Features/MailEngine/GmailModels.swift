@@ -70,3 +70,10 @@ struct GmailListLabelsResponse: Decodable {
 /// message resource. We don't need its contents, so this decodes trivially
 /// against any valid JSON object.
 struct EmptyResponse: Decodable {}
+
+/// Response from `users.watch` — registers push notifications (via Pub/Sub)
+/// for changes to this mailbox. `expiration` is epoch milliseconds, as a string.
+struct GmailWatchResponse: Decodable {
+    let historyId: String?
+    let expiration: String?
+}

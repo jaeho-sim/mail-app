@@ -2,28 +2,45 @@
 //  NotificationManager.swift
 //  MailApp
 //
-//  Local notifications for new mail and sync errors. This works whenever the
-//  app is running (foreground or briefly backgrounded) — it is NOT push, so
-//  it won't fire while the app is fully closed/suspended. True background
-//  delivery needs APNs + a server relay; see docs/PHASE5-BACKGROUND-PUSH.md.
+//  Posts local notifications for new mail and sync errors, and — once an
+//  account's Gmail watch + FCM token are registered (see PushRegistrar) —
+//  also acts as the delegate that shows those notifications as banners even
+//  while the app is in the foreground.
 //
 
 import Foundation
 import UserNotifications
 
+#if os(iOS)
+import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
+
 @MainActor
-final class NotificationManager {
+final class NotificationManager: NSObject {
     static let shared = NotificationManager()
 
-    private init() {}
+    private override init() { super.init() }
 
     /// Call after connecting an account, or at launch if accounts already
     /// exist. Only prompts the very first time (`.notDetermined`) — if the
-    /// user already said no, we don't nag them again.
+    /// user already said no, we don't nag them again. Also registers for
+    /// remote (push) notifications once permission is granted, so silent
+    /// pushes from the server relay can wake the app — see PushRegistrar.
     func requestAuthorizationIfNeeded() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
-            guard settings.authorizationStatus == .notDetermined else { return }
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+                    guard granted else { return }
+                    DispatchQueue.main.async { Self.registerForRemoteNotifications() }
+                }
+            case .authorized, .provisional:
+                DispatchQueue.main.async { Self.registerForRemoteNotifications() }
+            default:
+                break
+            }
         }
     }
 
@@ -62,5 +79,25 @@ final class NotificationManager {
         UNUserNotificationCenter.current().add(
             UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         )
+    }
+
+    private static func registerForRemoteNotifications() {
+        #if os(iOS)
+        UIApplication.shared.registerForRemoteNotifications()
+        #elseif os(macOS)
+        NSApplication.shared.registerForRemoteNotifications()
+        #endif
+    }
+}
+
+extension NotificationManager: UNUserNotificationCenterDelegate {
+    /// Without this, notifications triggered while the app is frontmost
+    /// wouldn't show anything — the default behavior is to suppress them.
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound, .list])
     }
 }

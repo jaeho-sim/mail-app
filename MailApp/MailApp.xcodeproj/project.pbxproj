@@ -45,6 +45,9 @@
 		92F45B6369044F4EB9128803 /* MessageAttachmentInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A647C6451FA49BDA3F6D535 /* MessageAttachmentInfo.swift */; };
 		9D6237E8175E466C8F9AFE62 /* AttachmentsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF8F7403C0B461596407F45 /* AttachmentsSection.swift */; };
 		DA7108C71BBE4A17A3B1A87C /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BE84879B704BA894285C63 /* NotificationManager.swift */; };
+		7469280E3DDC45BA8F0FB919 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 67333704982047329FC4B179 /* FirebaseMessaging */; };
+		E9E365EC5B984AA5B4200DFF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A19CF83EEA694D35B96C1EC5 /* AppDelegate.swift */; };
+		67F384F1DFA645EBAF01B3AD /* PushRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A840ADAC18A94A9C9422454C /* PushRegistrar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +104,8 @@
 		9A647C6451FA49BDA3F6D535 /* MessageAttachmentInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAttachmentInfo.swift; sourceTree = "<group>"; };
 		6DF8F7403C0B461596407F45 /* AttachmentsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsSection.swift; sourceTree = "<group>"; };
 		E5BE84879B704BA894285C63 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		A19CF83EEA694D35B96C1EC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A840ADAC18A94A9C9422454C /* PushRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushRegistrar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -125,6 +130,7 @@
 				2346D34F30086C12001E060F /* FirebaseFirestore in Frameworks */,
 				2346D35230086C71001E060F /* GoogleSignIn in Frameworks */,
 				2346D35430086C71001E060F /* GoogleSignInSwift in Frameworks */,
+				7469280E3DDC45BA8F0FB919 /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,6 +172,7 @@
 				7CE96A86F8BE45E5BF45EB64 /* Features */,
 				2346D32230084C2A001E060F /* ContentView.swift */,
 				2346D32030084C2A001E060F /* MailAppApp.swift */,
+				A19CF83EEA694D35B96C1EC5 /* AppDelegate.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -230,6 +237,7 @@
 				35CDEB0AD9384C699DCA885E /* MailSyncEngine.swift */,
 				E5BE84879B704BA894285C63 /* NotificationManager.swift */,
 				F5DD24866C1D42FABED278AB /* PeriodicSyncManager.swift */,
+				A840ADAC18A94A9C9422454C /* PushRegistrar.swift */,
 			);
 			path = MailEngine;
 			sourceTree = "<group>";
@@ -290,6 +298,7 @@
 				2346D34E30086C12001E060F /* FirebaseFirestore */,
 				2346D35130086C71001E060F /* GoogleSignIn */,
 				2346D35330086C71001E060F /* GoogleSignInSwift */,
+				67333704982047329FC4B179 /* FirebaseMessaging */,
 			);
 			productName = MailApp;
 			productReference = 2346D31D30084C2A001E060F /* MailApp.app */;
@@ -424,6 +433,7 @@
 			files = (
 				2346D32330084C2A001E060F /* ContentView.swift in Sources */,
 				2346D32130084C2A001E060F /* MailAppApp.swift in Sources */,
+				E9E365EC5B984AA5B4200DFF /* AppDelegate.swift in Sources */,
 				E6F57A08552642ED9E6D904A /* Account.swift in Sources */,
 				3A219936AD974DBFA3FFFF62 /* Mailbox.swift in Sources */,
 				15D2DDE5E76C4F179BFFAFD2 /* Message.swift in Sources */,
@@ -436,6 +446,7 @@
 					1E906B6247774BC2BC42536E /* MailSyncEngine.swift in Sources */,
 					DA7108C71BBE4A17A3B1A87C /* NotificationManager.swift in Sources */,
 					44C9A63E2C9D4611A2341CDB /* PeriodicSyncManager.swift in Sources */,
+					67F384F1DFA645EBAF01B3AD /* PushRegistrar.swift in Sources */,
 					4EA08E8F3F1D400AA4965085 /* SignInView.swift in Sources */,
 					B7872980C8474B5588F92111 /* SidebarView.swift in Sources */,
 					2141937AD7E3449D8D296281 /* PinnedMailboxRef.swift in Sources */,
@@ -865,6 +876,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2346D35030086C71001E060F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		67333704982047329FC4B179 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2346D34B30086C12001E060F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
